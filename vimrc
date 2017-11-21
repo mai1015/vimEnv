@@ -1,52 +1,47 @@
-"" General
-set number	" Show line numbers
-set linebreak	" Break lines at word (requires Wrap lines)
-set showbreak=+++	" Wrap-broken line prefix
-set textwidth=100	" Line wrap (number of cols)
-set showmatch	" Highlight matching brace
-set visualbell	" Use visual bell (no beeping)
+"
+" Configuration entry point
+"
+" author: mai1015 <i@mai1015.com>
+" source: https://github.com/mai1015/vimEnv
+" year  : 2017
+"
 
-set hlsearch	" Highlight all search results
-set smartcase	" Enable smart-case search
-set ignorecase	" Always case-insensitive
-set incsearch	" Searches for strings incrementally
+let g:vimDir = $HOME.'/.vim'
 
-set autoindent	" Auto-indent new lines
-set expandtab	" Use spaces instead of tabs
-set shiftwidth=4	" Number of auto-indent spaces
-set smartindent	" Enable smart-indent
-set smarttab	" Enable smart-tabs
-set softtabstop=4	" Number of spaces per Tab
+let g:hardcoreMode = 1
 
-"" Theme
-filetype on
-syntax on
-colorscheme Tomorrow-Night
-set guifont=Menlo\ Regular:h18
+let s:pluginDir  = g:vimDir.'/plugins/plugged'
+let s:pluginDef  = g:vimDir.'/plugins/def.vim'
+let s:pluginConf = g:vimDir.'/plugins/config.vim'
 
-"" Advanced
-set ruler	" Show row and column ruler information
+let s:configSetting = g:vimDir.'/config/setting.vim'
+let s:configMapping = g:vimDir.'/config/mapping.vim'
+let s:configAbbrev  = g:vimDir.'/config/abbrev.vim'
+let s:configAutocmd  = g:vimDir.'/config/autocmd.vim'
 
-set autowriteall	" Auto-write all file changes
-set backupdir=.backups	" Backup directories
+let s:userConfig  = g:vimDir.'/local.vim'
 
-set undolevels=1000	" Number of undo levels
-set backspace=indent,eol,start	" Backspace behaviour
+if !isdirectory(s:pluginDir)
+	exec ":source ".s:pluginDef
 
-"" Misc
-autocmd BufWritePre * :%s/\s\+$//e " Dealing white space
-set hlsearch " Highlight words
+	"Install plugins on first run
+	autocmd VimEnter * PlugInstall
 
-set showmatch " Show matching parenthesis
+else
 
-"" Plugin
-call plug#begin()
-Plug 'tpope/vim-sensible'
-Plug 'scrooloose/syntastic'
-Plug 'scrooloose/nerdcommenter' " Commenter
-Plug 'airblade/vim-gitgutter' " Show diff
-Plug 'mattn/emmet-vim' " emmet
-Plug 'terryma/vim-multiple-cursors'
-" On-demand loading
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-call plug#end()
+	" Loads the global config, mapping and settings
+    exec ":source ".s:configSetting
+    exec ":source ".s:configMapping
+    exec ":source ".s:configAbbrev
+    exec ":source ".s:configAutocmd
+
+    " Loads plugins def and config
+    exec ":source ".s:pluginDef
+    exec ":source ".s:pluginConf
+
+
+    " user configuration
+    if filereadable(s:userConfig)
+       exec ":source ".s:userConfig
+    endif
+endif
